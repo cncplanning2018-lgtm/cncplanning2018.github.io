@@ -10,7 +10,7 @@
         init: function () {
           const el = this.el;
           el.addEventListener('click', function () {
-            // 現在のenabled状態を取得して反転させる
+           
             const isEnabled = el.getAttribute('animation').enabled;
             el.setAttribute('animation', 'enabled', !isEnabled);
           });
@@ -33,7 +33,7 @@
                   gltf-model="#dog-model" 
                   scale="0.3 0.3 0.3" 
                   position="0 0 0" 
-                  rotation="90 0 0"
+                  rotation="0 0 0"
                   tap-jump
                   animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true; easing: easeInOutQuad; enabled: false;">
         </a-entity>
@@ -44,5 +44,6 @@
     </a-scene>
   </body>
 </html>
+
 
 
