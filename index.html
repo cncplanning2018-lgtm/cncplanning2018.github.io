@@ -3,26 +3,39 @@
   <head>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+    
+    <script>
+      // タップでアニメーションを切り替える魔法
+      AFRAME.registerComponent('tap-jump', {
+        init: function () {
+          const el = this.el;
+          el.addEventListener('click', function () {
+            // 現在のenabled状態を取得して反転させる
+            const isEnabled = el.getAttribute('animation').enabled;
+            el.setAttribute('animation', 'enabled', !isEnabled);
+          });
+        }
+      });
+    </script>
   </head>
   <body style="margin: 0px; overflow: hidden;">
-    <a-scene embedded arjs="debugUIEnabled: false;">
+    <a-scene embedded arjs="debugUIEnabled: false;" cursor="fuse: false; rayOrigin: mouse;">
       
       <a-assets>
-        <a-asset-item id="dog-model" src="dogg.glb"></a-asset-item>
+        <a-asset-item id="dog-model" src="dog.glb"></a-asset-item>
       </a-assets>
 
       <a-entity light="type: ambient; intensity: 1.0;"></a-entity>
 
-      <a-marker type="pattern" url="pattern-dogmarker01.patt">
+      <a-marker type="pattern" url="pattern-pattern-dogmarker02.patt">
         
         <a-entity id="dog" 
                   gltf-model="#dog-model" 
-                  scale="0.5 0.5 0.5" 
-          　　　　position="0 0 0" 
-          　　　　rotation="-90 0 0"
-                  look-at="[camera]"
-                  animation="property: position; to: 0 0.5 0; dir: alternate; dur: 500; loop: true; easing: easeInOutQuad">
+                  scale="0.3 0.3 0.3" 
+                  position="0 0 0" 
+                  rotation="-90 0 0"
+                  tap-jump
+                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true; easing: easeInOutQuad; enabled: false;">
         </a-entity>
 
       </a-marker>
@@ -31,4 +44,3 @@
     </a-scene>
   </body>
 </html>
-
