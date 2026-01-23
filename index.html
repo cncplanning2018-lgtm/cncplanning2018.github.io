@@ -3,47 +3,25 @@
   <head>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    
-    <script>
-      
-    　AFRAME.registerComponent('tap-jump', {
-        init: function () {
-          const el = this.el;
-          el.addEventListener('click', function () {
-           
-            const isEnabled = el.getAttribute('animation').enabled;
-            el.setAttribute('animation', 'enabled', !isEnabled);
-          });
-        }
-      });
-    </script>
   </head>
   <body style="margin: 0px; overflow: hidden;">
-    <a-scene embedded arjs="debugUIEnabled: false;" cursor="fuse: false; rayOrigin: mouse;">
+    <a-scene embedded arjs="debugUIEnabled: false;">
       
       <a-assets>
-        <a-asset-item id="dog-model" src="dogg.glb"></a-asset-item>
+        <a-asset-item id="elephant-model" src="ele01.glb"></a-asset-item>
       </a-assets>
 
-      <a-entity light="type: ambient; intensity: 1.0;"></a-entity>
-
-      <a-marker type="pattern" url="pattern-dogmarker01.patt">
-        
-        <a-entity id="dog" 
-                  gltf-model="#dog-model" 
-                  scale="0.3 0.3 0.3" 
-                  position="0 0 0" 
-                  rotation="0 0 0"
-                  tap-jump
-                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true; easing: easeInOutQuad; enabled: false;">
+      <a-markertype="pattern" url="pattern-pattern-dogmarker02.patt">
+        <a-entity 
+          gltf-model="#elephant-model" 
+          scale="0.5 0.5 0.5" 
+          position="0 0 0"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
         </a-entity>
-
       </a-marker>
 
       <a-entity camera></a-entity>
     </a-scene>
   </body>
 </html>
-
-
 
