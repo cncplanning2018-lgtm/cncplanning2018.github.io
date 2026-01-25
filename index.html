@@ -6,28 +6,27 @@
     
     <script>
       AFRAME.registerComponent('model-switcher', {
-        AFRAME.registerComponent('model-switcher', {
         init: function () {
-          // IDを配列で持つ（#を外して、後でつなげる形にすると確実です）
+          // 配列内のIDが下の<a-asset-item>のidと一致しているかチェック！
           this.models = ['dog-model', 'ele-model', 'sheep-model']; 
           this.currentIndex = 0;
           const el = this.el;
 
           el.addEventListener('click', () => {
+            // インデックスを進める
             this.currentIndex = (this.currentIndex + 1) % this.models.length;
             const nextModelId = '#' + this.models[this.currentIndex];
             
-            // 重要：一度モデル属性を消去してから再設定する（キャッシュ対策）
-            el.removeAttribute('gltf-model');
+            // モデルを切り替える
             el.setAttribute('gltf-model', nextModelId);
             
-            // アニメーションを強制リセットして再始動
+            // アニメーションを一度リセットしてオンにする
             el.setAttribute('animation', 'enabled', false);
             setTimeout(() => {
                 el.setAttribute('animation', 'enabled', true);
-            }, 10);
+            }, 50);
             
-            console.log("Switched to:", nextModelId); // PCで確認できるログ
+            console.log("Next model:", nextModelId);
           });
         }
       });
@@ -37,9 +36,9 @@
     <a-scene embedded arjs="debugUIEnabled: false;" cursor="fuse: false; rayOrigin: mouse;">
       
       <a-assets>
-        <a-asset-item id="dog-model" src="sheep.glb"></a-asset-item>
+        <a-asset-item id="dog-model" src="dogg.glb"></a-asset-item>
         <a-asset-item id="ele-model" src="ele01.glb"></a-asset-item>
-        <a-asset-item id="sheep-model" src="dogg.glb"></a-asset-item>
+        <a-asset-item id="sheep-model" src="sheep.glb"></a-asset-item>
       </a-assets>
 
       <a-entity light="type: ambient; intensity: 1.2;"></a-entity>
@@ -59,8 +58,3 @@
     </a-scene>
   </body>
 </html>
-
-
-
-
-
