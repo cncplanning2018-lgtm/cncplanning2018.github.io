@@ -19,7 +19,7 @@
             el.setAttribute('gltf-model', this.models[this.currentIndex]);
             
             // 切り替わった瞬間にジャンプさせる（演出）
-            el.setAttribute('animation', 'false', true);
+            el.setAttribute('animation', 'enabled', true);
             setTimeout(() => {
                 // そのまま跳ねさせ続けるならここは何もしない
                 // 一回だけ跳ねさせたい場合は、ここでenabledをfalseにする処理を書きます
@@ -55,4 +55,5 @@
     </a-scene>
   </body>
 </html>
+
 
