@@ -6,24 +6,28 @@
     
     <script>
       AFRAME.registerComponent('model-switcher', {
+        AFRAME.registerComponent('model-switcher', {
         init: function () {
-          this.models = ['#dog-model', '#ele-model', '#sheep-model']; // 登場させたいID
+          // IDを配列で持つ（#を外して、後でつなげる形にすると確実です）
+          this.models = ['dog-model', 'ele-model', 'sheep-model']; 
           this.currentIndex = 0;
           const el = this.el;
 
           el.addEventListener('click', () => {
-            // インデックスを次に進める（最後まで行ったら0に戻る）
             this.currentIndex = (this.currentIndex + 1) % this.models.length;
+            const nextModelId = '#' + this.models[this.currentIndex];
             
-            // モデルを切り替え
-            el.setAttribute('gltf-model', this.models[this.currentIndex]);
+            // 重要：一度モデル属性を消去してから再設定する（キャッシュ対策）
+            el.removeAttribute('gltf-model');
+            el.setAttribute('gltf-model', nextModelId);
             
-            // 切り替わった瞬間にジャンプさせる（演出）
-            el.setAttribute('animation', 'enabled', true);
+            // アニメーションを強制リセットして再始動
+            el.setAttribute('animation', 'enabled', false);
             setTimeout(() => {
-                // そのまま跳ねさせ続けるならここは何もしない
-                // 一回だけ跳ねさせたい場合は、ここでenabledをfalseにする処理を書きます
-            }, 1000);
+                el.setAttribute('animation', 'enabled', true);
+            }, 10);
+            
+            console.log("Switched to:", nextModelId); // PCで確認できるログ
           });
         }
       });
@@ -55,6 +59,7 @@
     </a-scene>
   </body>
 </html>
+
 
 
 
