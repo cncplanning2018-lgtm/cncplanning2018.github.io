@@ -6,35 +6,36 @@
     <script>
       AFRAME.registerComponent('ar-manager', {
         init: function () {
+          // IDを配列にセット
           this.models = [
             document.querySelector('#model-dog'),
-            document.querySelector('#model-ele'),
-            document.querySelector('#model-sheep')
+            document.querySelector('#model-sheep'),
+            document.querySelector('#model-ele')
           ];
-          this.infoBoard = document.querySelector('#info-board'); // 案内板
+          this.infoBoard = document.querySelector('#info-board');
           this.effect = document.querySelector('#magic-particle');
-          this.index = 0;
-          this.isFinished = false; // 最後まで行ったかどうかのフラグ
+          this.index = 0; // 0:犬, 1:羊, 2:象
+          this.isFinished = false;
 
           window.addEventListener('click', () => {
-            if (this.isFinished) return; // 終了後は何もしない
+            if (this.isFinished) return;
 
+            // エフェクト発火
             this.effect.setAttribute('visible', true);
             this.effect.emit('burst');
             
             setTimeout(() => {
-              // 現在のモデルを隠す
+              // 今表示されているキャラを隠す
               this.models[this.index].setAttribute('visible', false);
 
+              // 次がまだキャラなら、インデックスを進めて表示
               if (this.index < this.models.length - 1) {
-                // まだ次のキャラがいる場合
                 this.index++;
                 this.models[this.index].setAttribute('visible', true);
               } else {
-                // 全キャラ終わったら案内板を出す
+                // 最後のキャラ（象）の次なら看板を出す
                 this.infoBoard.setAttribute('visible', true);
                 this.isFinished = true;
-                console.log("Goal! Showing info board.");
               }
             }, 100);
 
@@ -61,13 +62,18 @@
           </a-sphere>
         </a-entity>
 
-        <a-entity id="model-dog" gltf-model="#glb-dog" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="true" animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
-        <a-entity id="model-ele" gltf-model="#glb-ele" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="false" animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
-        <a-entity id="model-sheep" gltf-model="#glb-sheep" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="false" animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
+        <a-entity id="model-dog" gltf-model="#glb-dog" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="true" 
+                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
+        
+        <a-entity id="model-sheep" gltf-model="#glb-sheep" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="false" 
+                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
+
+        <a-entity id="model-ele" gltf-model="#glb-ele" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="false" 
+                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
 
         <a-entity id="info-board" visible="false" position="0 0.5 0" rotation="-90 0 0">
-          <a-plane width="2" height="1" color="#333" opacity="0.9"></a-plane>
-          <a-text value="GOAL! \n NEXT: CAFE KAGAMI" align="center" color="#FFCC00" width="4" position="0 0 0.1"></a-text>
+          <a-plane width="2.5" height="1.2" color="#333" opacity="0.9"></a-plane>
+          <a-text value="GOAL! \n NEXT: CAFE KAGAMI" align="center" color="#FFCC00" width="5" position="0 0 0.1"></a-text>
         </a-entity>
 
       </a-marker>
