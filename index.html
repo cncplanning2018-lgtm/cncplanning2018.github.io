@@ -6,31 +6,33 @@
     <script>
       AFRAME.registerComponent('ar-manager', {
         init: function () {
-          // IDを配列にセット
+          // モデルを順番通りに配列へ格納
           this.models = [
-            document.querySelector('#model-dog'),
-            document.querySelector('#model-sheep'),
-            document.querySelector('#model-ele')
+            document.querySelector('#model-dog'),   // 0: 犬
+            document.querySelector('#model-sheep'), // 1: 羊
+            document.querySelector('#model-ele')    // 2: 象
           ];
           this.infoBoard = document.querySelector('#info-board');
           this.effect = document.querySelector('#magic-particle');
-          this.index = 0; // 0:犬, 1:羊, 2:象
+          this.index = 0;
           this.isFinished = false;
 
-         window.addEventListener('click', () => {
+          window.addEventListener('click', () => {
+            // 看板が出た後はクリックを受け付けない
             if (this.isFinished) return;
 
+            // 1. エフェクト（白い球体）を出す
             this.effect.setAttribute('visible', true);
             this.effect.emit('burst');
             
             setTimeout(() => {
-              // 1. 今のキャラを隠す
+              // 2. 現在のキャラを隠す
               this.models[this.index].setAttribute('visible', false);
 
-              // 2. 次に進む
+              // 3. インデックスを1つ進める
               this.index++;
 
-              // 3. 次がまだキャラの範囲内なら表示、超えたら看板
+              // 4. まだキャラが残っていれば表示、配列を超えたら看板を出す
               if (this.index < this.models.length) {
                 this.models[this.index].setAttribute('visible', true);
               } else {
@@ -39,7 +41,10 @@
               }
             }, 100);
 
-            setTimeout(() => { this.effect.setAttribute('visible', false); }, 800);
+            // エフェクトを隠す
+            setTimeout(() => {
+              this.effect.setAttribute('visible', false);
+            }, 800);
           });
         }
       });
@@ -47,11 +52,14 @@
   </head>
   <body style="margin: 0px; overflow: hidden;">
     <a-scene embedded arjs="debugUIEnabled: false;" cursor="fuse: false; rayOrigin: mouse;" ar-manager>
+      
       <a-assets>
         <a-asset-item id="glb-dog" src="dogg.glb"></a-asset-item>
         <a-asset-item id="glb-ele" src="ele01.glb"></a-asset-item>
         <a-asset-item id="glb-sheep" src="sheep.glb"></a-asset-item>
       </a-assets>
+
+      <a-entity light="type: ambient; intensity: 1.2;"></a-entity>
 
       <a-marker type="pattern" url="pattern-marker02.patt">
         
@@ -73,7 +81,7 @@
 
         <a-entity id="info-board" visible="false" position="0 0.5 0" rotation="-90 0 0">
           <a-plane width="2.5" height="1.2" color="#333" opacity="0.9"></a-plane>
-          <a-text value="GOAL! \n NEXT: CAFE KAGAMI" align="center" color="#FFCC00" width="5" position="0 0 0.1"></a-text>
+          <a-text value="GOAL! \n NEXT: KAGAMIISHI STATION" align="center" color="#FFCC00" width="5" position="0 0 0.1"></a-text>
         </a-entity>
 
       </a-marker>
@@ -82,4 +90,3 @@
     </a-scene>
   </body>
 </html>
-
