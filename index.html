@@ -17,23 +17,23 @@
           this.index = 0; // 0:犬, 1:羊, 2:象
           this.isFinished = false;
 
-          window.addEventListener('click', () => {
+         window.addEventListener('click', () => {
             if (this.isFinished) return;
 
-            // エフェクト発火
             this.effect.setAttribute('visible', true);
             this.effect.emit('burst');
             
             setTimeout(() => {
-              // 今表示されているキャラを隠す
+              // 1. 今のキャラを隠す
               this.models[this.index].setAttribute('visible', false);
 
-              // 次がまだキャラなら、インデックスを進めて表示
-              if (this.index < this.models.length - 1) {
-                this.index++;
+              // 2. 次に進む
+              this.index++;
+
+              // 3. 次がまだキャラの範囲内なら表示、超えたら看板
+              if (this.index < this.models.length) {
                 this.models[this.index].setAttribute('visible', true);
               } else {
-                // 最後のキャラ（象）の次なら看板を出す
                 this.infoBoard.setAttribute('visible', true);
                 this.isFinished = true;
               }
@@ -82,3 +82,4 @@
     </a-scene>
   </body>
 </html>
+
