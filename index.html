@@ -6,105 +6,49 @@
     <script>
       AFRAME.registerComponent('ar-manager', {
         init: function () {
-          // DOM準備を待つ
-          setTimeout(() => {
-            this.models = [
-              document.querySelector('#model-dog'),
-              document.querySelector('#model-sheep'),
-              document.querySelector('#model-ele')
-            ];
-            this.infoBoard = document.querySelector('#info-board');
-            this.effect = document.querySelector('#magic-particle');
-            this.marker = document.querySelector('a-marker');
-            
-            // マーカー検出の監視
-            this.markerVisible = false;
-            this.marker.addEventListener('markerFound', () => {
-              this.markerVisible = true;
-            });
-            this.marker.addEventListener('markerLost', () => {
-              this.markerVisible = false;
-            });
-          }, 500);
-          
           this.index = 0;
-          this.isFinished = false;
           
           window.addEventListener('click', () => {
-            // マーカーが見えてない or 看板表示済みならスキップ
-            if (!this.markerVisible || this.isFinished) return;
+            console.log('クリック! index:', this.index);
             
-            // 1. エフェクトを表示
-            this.effect.setAttribute('visible', true);
+            const dog = document.querySelector('#model-dog');
+            const sheep = document.querySelector('#model-sheep');
+            const ele = document.querySelector('#model-ele');
             
-            // 2. 少し待ってからアニメーション開始
-            setTimeout(() => {
-              this.effect.emit('burst');
-            }, 50);
-            
-            // 3. キャラ切り替え
-            setTimeout(() => {
-              this.models[this.index].setAttribute('visible', false);
-              this.index++;
-              
-              if (this.index < this.models.length) {
-                this.models[this.index].setAttribute('visible', true);
-              } else {
-                this.infoBoard.setAttribute('visible', true);
-                this.isFinished = true;
-              }
-            }, 100);
-            
-            // 4. エフェクトを隠す
-            setTimeout(() => {
-              this.effect.setAttribute('visible', false);
-            }, 800);
+            if (this.index === 0) {
+              // 犬→羊
+              console.log('犬を隠して羊を表示');
+              dog.setAttribute('visible', false);
+              sheep.setAttribute('visible', true);
+              this.index = 1;
+            } else if (this.index === 1) {
+              // 羊→象
+              console.log('羊を隠して象を表示');
+              sheep.setAttribute('visible', false);
+              ele.setAttribute('visible', true);
+              this.index = 2;
+            } else {
+              console.log('もう終わり');
+            }
           });
         }
       });
     </script>
   </head>
   <body style="margin: 0px; overflow: hidden;">
-    <a-scene embedded arjs="debugUIEnabled: false;" cursor="fuse: false; rayOrigin: mouse;" ar-manager>
+    <a-scene embedded arjs="debugUIEnabled: false;" ar-manager>
       
       <a-assets>
         <a-asset-item id="glb-dog" src="dogg.glb"></a-asset-item>
-        <a-asset-item id="glb-ele" src="ele01.glb"></a-asset-item>
         <a-asset-item id="glb-sheep" src="sheep.glb"></a-asset-item>
+        <a-asset-item id="glb-ele" src="ele01.glb"></a-asset-item>
       </a-assets>
-      
-      <a-entity light="type: ambient; intensity: 1.2;"></a-entity>
       
       <a-marker type="pattern" url="pattern-marker02.patt">
         
-        <!-- エフェクト(修正版) -->
-        <a-entity id="magic-particle" visible="false" position="0 0.5 0">
-          <a-sphere radius="0.05" color="#FFF" opacity="0.8"
-            animation__scale="property: scale; from: 1 1 1; to: 10 10 10; dur: 500; startEvents: burst"
-            animation__opacity="property: material.opacity; from: 0.8; to: 0; dur: 500; startEvents: burst">
-          </a-sphere>
-        </a-entity>
-        
-        <!-- 犬(最初に表示) -->
-        <a-entity id="model-dog" gltf-model="#glb-dog" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="true" 
-                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;">
-        </a-entity>
-        
-        <!-- 羊 -->
-        <a-entity id="model-sheep" gltf-model="#glb-sheep" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="false" 
-                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;">
-        </a-entity>
-        
-        <!-- 象 -->
-        <a-entity id="model-ele" gltf-model="#glb-ele" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="false" 
-                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;">
-        </a-entity>
-        
-        <!-- 看板 -->
-        <a-entity id="info-board" visible="false" position="0 0.5 0" rotation="-90 0 0">
-          <a-plane width="2.5" height="1.2" color="#333" opacity="0.9"></a-plane>
-          <a-text value="GOAL! \n NEXT: CAFE KAGAMI" align="center" color="#FFCC00" width="5" position="0 0 0.1"></a-text>
-        </a-entity>
+        <a-entity id="model-dog" gltf-model="#glb-dog" scale="0.3 0.3 0.3" visible="true"></a-entity>
+        <a-entity id="model-sheep" gltf-model="#glb-sheep" scale="0.3 0.3 0.3" visible="false"></a-entity>
+        <a-entity id="model-ele" gltf-model="#glb-ele" scale="0.3 0.3 0.3" visible="false"></a-entity>
         
       </a-marker>
       
