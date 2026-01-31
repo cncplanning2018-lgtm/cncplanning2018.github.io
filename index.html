@@ -19,8 +19,7 @@
 
           // スマホでの誤作動を防ぐため、全体ではなく「画面クリック」を検知
           window.addEventListener('touchstart', (e) => this.handleNext());
-          window.addEventListener('mousedown', (e) => this.handleNext());
-        },
+                 },
 
         handleNext: function() {
           if (this.isFinished) return;
@@ -85,3 +84,4 @@
     </a-scene>
   </body>
 </html>
+
