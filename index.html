@@ -7,43 +7,32 @@
       AFRAME.registerComponent('stamp-rally', {
         init: function () {
           this.markerIds = ['marker01', 'marker02', 'marker03'];
-          this.infoBoard = document.querySelector('#info-board');
           
-          // マーカー検知時の処理
+          // マーカーを検知した時の処理
           this.el.addEventListener('markerFound', () => {
-            const markerId = this.el.id; // marker01, 02, 03
-            console.log("Found:", markerId);
-            
-            // 訪れたマーカーを記録
-            localStorage.setItem(markerId, 'visited');
-            
-            // 全コンプリートしたかチェック
-            this.checkComplete();
-          });
+            const markerId = this.el.id;
+            localStorage.setItem(markerId, 'visited'); // 訪問記録
 
-          // タップ時の処理
-          window.addEventListener('touchstart', () => {
-            if (this.isAllVisited()) {
-              // コンプリートしてたら看板を出す
-              this.showGoal();
+            // コンプリート状態をチェック
+            const isComplete = this.markerIds.every(id => localStorage.getItem(id) === 'visited');
+
+            // もし marker01 (犬の場所) なら
+            if (markerId === 'marker01') {
+              const dog = document.querySelector('#model-dog');
+              const giaffe = document.querySelector('#model-giaffe');
+
+              if (isComplete) {
+                // コンプリート済みなら：犬を隠してキリンを出す
+                dog.setAttribute('visible', false);
+                giaffe.setAttribute('visible', true);
+                console.log("Secret Character Unlocked: GIAFFE!");
+              } else {
+                // まだなら：犬を出す
+                dog.setAttribute('visible', true);
+                giaffe.setAttribute('visible', false);
+              }
             }
           });
-        },
-
-        isAllVisited: function() {
-          return this.markerIds.every(id => localStorage.getItem(id) === 'visited');
-        },
-
-        checkComplete: function() {
-          if (this.isAllVisited()) {
-            console.log("All markers visited!");
-          }
-        },
-
-        showGoal: function() {
-          // 全キャラを隠して看板を出す
-          document.querySelectorAll('.ar-model').forEach(m => m.setAttribute('visible', false));
-          this.infoBoard.setAttribute('visible', true);
         }
       });
     </script>
@@ -52,39 +41,30 @@
     <a-scene embedded arjs="debugUIEnabled: false;" cursor="fuse: false; rayOrigin: mouse;">
       
       <a-assets>
-        <a-asset-item id="glb-dog" src="giaffe.glb"></a-asset-item>
+        <a-asset-item id="glb-dog" src="dogg.glb"></a-asset-item>
         <a-asset-item id="glb-sheep" src="sheep.glb"></a-asset-item>
         <a-asset-item id="glb-ele" src="ele01.glb"></a-asset-item>
         <a-asset-item id="glb-giaffe" src="giaffe.glb"></a-asset-item>
       </a-assets>
 
-      <a-entity light="type: ambient; intensity: 1.2;"></a-entity>
-
       <a-marker id="marker01" type="pattern" url="pattern-marker01.patt" stamp-rally>
-        <a-entity id="model-dog" class="ar-model" gltf-model="#glb-dog" scale="1.0 1.0 1.0" rotation="-15 0 0" 
+        <a-entity id="model-dog" gltf-model="#glb-dog" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="true"
+                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
+        <a-entity id="model-giaffe" gltf-model="#glb-giaffe" scale="0.2 0.2 0.2" rotation="-15 0 0" visible="false"
                   animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
       </a-marker>
 
       <a-marker id="marker02" type="pattern" url="pattern-marker02.patt" stamp-rally>
-        <a-entity id="model-sheep" class="ar-model" gltf-model="#glb-sheep" scale="0.3 0.3 0.3" rotation="-15 0 0" 
+        <a-entity id="model-sheep" gltf-model="#glb-sheep" scale="0.3 0.3 0.3" rotation="-15 0 0"
                   animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
       </a-marker>
 
       <a-marker id="marker03" type="pattern" url="pattern-marker03.patt" stamp-rally>
-        <a-entity id="model-ele" class="ar-model" gltf-model="#glb-ele" scale="0.3 0.3 0.3" rotation="-15 0 0" 
+        <a-entity id="model-ele" gltf-model="#glb-ele" scale="0.3 0.3 0.3" rotation="-15 0 0"
                   animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
       </a-marker>
 
-      <a-entity camera>
-        <a-entity id="info-board" visible="false" position="0 0 -1">
-          <a-plane width="1.5" height="0.6" color="#333" opacity="0.9"></a-plane>
-          <a-text value="CONGRATS!\nGO TO KAGAMIISHI STA." align="center" color="#FFCC00" width="1"></a-text>
-        </a-entity>
-      </a-entity>
-
+      <a-entity camera></a-entity>
     </a-scene>
   </body>
 </html>
-
-
-
