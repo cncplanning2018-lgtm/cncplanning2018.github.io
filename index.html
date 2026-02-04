@@ -4,30 +4,31 @@
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <script>
-      AFRAME.registerComponent('stamp-rally', {
+     AFRAME.registerComponent('stamp-rally', {
         init: function () {
           this.markerIds = ['marker01', 'marker02', 'marker03'];
           
-          // マーカーを検知した時の処理
           this.el.addEventListener('markerFound', () => {
             const markerId = this.el.id;
-            localStorage.setItem(markerId, 'visited'); // 訪問記録
+            localStorage.setItem(markerId, 'visited');
 
-            // コンプリート状態をチェック
-            const isComplete = this.markerIds.every(id => localStorage.getItem(id) === 'visited');
+            // 全コンプリート判定（ここをより確実に）
+            let visitCount = 0;
+            this.markerIds.forEach(id => {
+              if(localStorage.getItem(id) === 'visited') visitCount++;
+            });
+            const isComplete = (visitCount >= 3);
 
-            // もし marker01 (犬の場所) なら
             if (markerId === 'marker01') {
               const dog = document.querySelector('#model-dog');
               const giaffe = document.querySelector('#model-giaffe');
 
               if (isComplete) {
-                // コンプリート済みなら：犬を隠してキリンを出す
+                // 3つ揃った時だけキリン
                 dog.setAttribute('visible', false);
                 giaffe.setAttribute('visible', true);
-                console.log("Secret Character Unlocked: GIAFFE!");
               } else {
-                // まだなら：犬を出す
+                // それ以外は絶対に犬
                 dog.setAttribute('visible', true);
                 giaffe.setAttribute('visible', false);
               }
@@ -68,3 +69,4 @@
     </a-scene>
   </body>
 </html>
+
