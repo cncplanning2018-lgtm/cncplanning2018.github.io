@@ -3,77 +3,24 @@
   <head>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <script>
-      AFRAME.registerComponent('stamp-rally', {
-        init: function () {
-          this.markerIds = ['marker01', 'marker02', 'marker03'];
-          this.infoBoard = document.querySelector('#info-board');
-          
-          this.el.addEventListener('markerFound', () => {
-            const markerId = this.el.id;
-            localStorage.setItem(markerId, 'visited');
-
-            // コンプリート判定
-            let visitCount = 0;
-            this.markerIds.forEach(id => {
-              if(localStorage.getItem(id) === 'visited') visitCount++;
-            });
-            const isComplete = (visitCount >= 3);
-
-            if (markerId === 'marker01') {
-              const dog = document.querySelector('#model-dog');
-              const giaffe = document.querySelector('#model-giaffe');
-
-              if (isComplete) {
-                dog.setAttribute('visible', false);
-                giaffe.setAttribute('visible', true);
-                // コンプリートしていたら看板も出す
-                this.infoBoard.setAttribute('visible', true);
-              } else {
-                dog.setAttribute('visible', true);
-                giaffe.setAttribute('visible', false);
-                this.infoBoard.setAttribute('visible', false);
-              }
-            }
-          });
-        }
-      });
-    </script>
   </head>
   <body style="margin: 0px; overflow: hidden;">
-    <a-scene embedded arjs="debugUIEnabled: false;" cursor="fuse: false; rayOrigin: mouse;">
+    <a-scene embedded arjs="debugUIEnabled: false;">
       
       <a-assets>
-        <a-asset-item id="glb-dog" src="dogg.glb"></a-asset-item>
-        <a-asset-item id="glb-ele" src="ele01.glb"></a-asset-item>
-        <a-asset-item id="glb-sheep" src="sheep.glb"></a-asset-item>
-        <a-asset-item id="glb-giaffe" src="giaffe.glb"></a-asset-item>
-        <img id="kyoen-logo" src="kyoen-logo.png">
+        <a-asset-item id="sheep-model" src="sheep.glb"></a-asset-item>
       </a-assets>
 
-      <a-marker id="marker01" type="pattern" url="pattern-marker01.patt" stamp-rally>
-        <a-entity id="model-dog" gltf-model="#glb-dog" scale="0.3 0.3 0.3" rotation="-15 0 0" visible="true"
-                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
-        <a-entity id="model-giaffe" gltf-model="#glb-giaffe" scale="0.5 0.5 0.5" rotation="-15 0 0" visible="false"
-                  animation="property: position; from: 0 0 0; to: 0 0.5 0; dir: alternate; dur: 500; loop: true;"></a-entity>
-      </a-marker>
-
-      <a-marker id="marker02" type="pattern" url="pattern-marker02.patt" stamp-rally>
-        <a-entity gltf-model="#glb-sheep" scale="0.3 0.3 0.3" rotation="-15 0 0"></a-entity>
-      </a-marker>
-
-      <a-marker id="marker03" type="pattern" url="pattern-marker03.patt" stamp-rally>
-        <a-entity gltf-model="#glb-ele" scale="0.3 0.3 0.3" rotation="-15 0 0"></a-entity>
-      </a-marker>
-
-      <a-entity camera>
-        <a-entity id="info-board" visible="false" position="0 0.6 -2">
-          <a-image src="#kyoen-logo" width="0.5" height="0.5" opacity="0.5"></a-image>
-          <a-text value="STAMP RALLY COMPLETE!" align="center" color="#FFF" width="4" position="0 -1.2 0"></a-text>
+      <a-marker preset="hiro">
+        <a-entity 
+          gltf-model="#sheep-model" 
+          scale="0.5 0.5 0.5" 
+          position="0 0 0"
+          rotation="-20 0 0">
         </a-entity>
-      </a-entity>
+      </a-marker>
 
+      <a-entity camera></a-entity>
     </a-scene>
   </body>
 </html>
-
