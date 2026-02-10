@@ -2,11 +2,11 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   
   <style>
-    /* 撮影ボタンのデザイン */
     .shutter-button {
       position: fixed;
       bottom: 30px;
@@ -19,11 +19,8 @@
       border-radius: 50%;
       z-index: 9999;
       cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
-    .shutter-button:active {
-      background: #FFCC00;
-    }
-    /* フラッシュ演出用 */
     #flash {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -40,9 +37,9 @@
 
   <a-scene 
     embedded 
-    arjs="debugUIEnabled: false;" 
+    arjs="debugUIEnabled: false; sourceType: webcam;" 
     screenshot
-    renderer="preserveDrawingBuffer: true;">
+    renderer="preserveDrawingBuffer: true; antialias: true; alpha: true;">
     
     <a-assets>
       <a-asset-item id="sheep-model" src="dogg.glb"></a-asset-item>
@@ -71,20 +68,20 @@
       setTimeout(() => { flash.style.display = 'none'; }, 100);
 
       // 2. 撮影処理
-      // A-Frameのscreenshotコンポーネントからキャンバスを取得
-      const canvas = sceneEl.components.screenshot.getCanvas('perspective');
       const video = document.querySelector('video');
+      const canvasAR = sceneEl.components.screenshot.getCanvas('perspective');
       
-      // 合成用のキャンバスを作成
+      // 合成用のキャンバスを作成（ビデオの実際の解像度に合わせる）
       const combinedCanvas = document.createElement('canvas');
-      combinedCanvas.width = canvas.width;
-      combinedCanvas.height = canvas.height;
+      combinedCanvas.width = video.videoWidth;
+      combinedCanvas.height = video.videoHeight;
       const ctx = combinedCanvas.getContext('2d');
 
-      // 背景（カメラ映像）を描画
+      // 背景（カメラ映像）をそのままの比率で描画
       ctx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
-      // ARモデルを描画
-      ctx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
+      
+      // ARモデルをビデオのサイズに合わせて重ねる
+      ctx.drawImage(canvasAR, 0, 0, combinedCanvas.width, combinedCanvas.height);
 
       // 3. ダウンロード実行
       const link = document.createElement('a');
