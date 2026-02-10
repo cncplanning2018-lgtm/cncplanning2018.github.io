@@ -74,7 +74,7 @@
       // 合成用のキャンバスを作成（ビデオの実際の解像度に合わせる）
       const combinedCanvas = document.createElement('canvas');
       combinedCanvas.width =video.clientWidth;
-      combinedCanvas.height = video.clientHeight * 0.9;
+      combinedCanvas.height = video.clientHeight * 0.5;
       const ctx = combinedCanvas.getContext('2d');
 
       // 背景（カメラ映像）をそのままの比率で描画
@@ -92,5 +92,6 @@
   </script>
 </body>
 </html>
+
 
 
