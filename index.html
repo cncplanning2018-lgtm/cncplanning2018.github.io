@@ -38,7 +38,11 @@
   <div id="flash"></div>
   <div id="btn-cap" class="shutter-button"></div>
 
-  <a-scene embedded arjs="debugUIEnabled: false;" screenshot>
+  <a-scene 
+    embedded 
+    arjs="debugUIEnabled: false;" 
+    screenshot
+    renderer="preserveDrawingBuffer: true;">
     
     <a-assets>
       <a-asset-item id="sheep-model" src="dogg.glb"></a-asset-item>
@@ -54,46 +58,40 @@
     </a-marker>
 
     <a-entity camera></a-entity>
-<a-scene 
-  embedded 
-  arjs="debugUIEnabled: false;" 
-  screenshot
-  renderer="preserveDrawingBuffer: true;"> <a-assets>
-    <a-asset-item id="sheep-model" src="dogg.glb"></a-asset-item>
-  </a-assets>
-  
   </a-scene>
 
-<script>
-  // 3. スクリプト部分：少し強引に「背景」を合成する処理に変えます
-  btn.addEventListener('click', () => {
-    flash.style.display = 'block';
-    setTimeout(() => { flash.style.display = 'none'; }, 100);
-
-    // scene全体をキャプチャする命令
+  <script>
+    const btn = document.getElementById('btn-cap');
     const sceneEl = document.querySelector('a-scene');
-    // perspective（3Dモデル）をキャプチャ
-    const canvas = sceneEl.components.screenshot.getCanvas('perspective');
-    
-    // 背景のカメラ映像と合成するための処理（簡易版）
-    const video = document.querySelector('video');
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = canvas.width;
-    combinedCanvas.height = canvas.height;
-    const ctx = combinedCanvas.getContext('2d');
+    const flash = document.getElementById('flash');
 
-    // 1. ビデオ（背景）を描画
-    ctx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
-    // 2. ARモデルを描画
-    ctx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
+    btn.addEventListener('click', () => {
+      // 1. フラッシュ演出
+      flash.style.display = 'block';
+      setTimeout(() => { flash.style.display = 'none'; }, 100);
 
-    // 3. ダウンロード実行
-    const link = document.createElement('a');
-    link.download = 'kagami-en-photo.png';
-    link.href = combinedCanvas.toDataURL('image/png');
-    link.click();
-  });
-</script>
+      // 2. 撮影処理
+      // A-Frameのscreenshotコンポーネントからキャンバスを取得
+      const canvas = sceneEl.components.screenshot.getCanvas('perspective');
+      const video = document.querySelector('video');
+      
+      // 合成用のキャンバスを作成
+      const combinedCanvas = document.createElement('canvas');
+      combinedCanvas.width = canvas.width;
+      combinedCanvas.height = canvas.height;
+      const ctx = combinedCanvas.getContext('2d');
+
+      // 背景（カメラ映像）を描画
+      ctx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
+      // ARモデルを描画
+      ctx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
+
+      // 3. ダウンロード実行
+      const link = document.createElement('a');
+      link.download = 'kagami-en-photo.png';
+      link.href = combinedCanvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
 </body>
 </html>
-
