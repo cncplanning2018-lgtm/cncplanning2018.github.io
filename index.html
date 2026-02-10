@@ -1,10 +1,60 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-  </head>
-  <body style="margin: 0px; overflow: hidden;">
+<head>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <style>
+    /* 撮影ボタンのデザイン */
+    .shutter-button {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70px;
+      height: 70px;
+      background: white;
+      border: 5px solid #FFCC00;
+      border-radius: 50%;
+      z-index: 9999;
+      cursor: pointer;
+    }
+    .shutter-button:active {
+      background: #FFCC00;
+    }
+    /* 撮影時のフラッシュ演出用 */
+    #flash {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: white;
+      z-index: 10000;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="flash"></div>
+  <div id="btn-cap" class="shutter-button"></div>
+
+  <a-scene embedded arjs="debugUIEnabled: false;" screenshot>
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    const btn = document.getElementById('btn-cap');
+    const scene = document.querySelector('a-scene');
+    const flash = document.getElementById('flash');
+
+    btn.addEventListener('click', () => {
+      // 1. フラッシュ演出
+      flash.style.display = 'block';
+      setTimeout(() => { flash.style.display = 'none'; }, 100);
+
+      // 2. 撮影実行
+      // component.screenshot.capture('perspective') で現在の画面をキャプチャ
+      scene.components.screenshot.capture('perspective');
+    });
+  </script>
+</body>
     <a-scene embedded arjs="debugUIEnabled: false;">
       
       <a-assets>
@@ -24,6 +74,7 @@
     </a-scene>
   </body>
 </html>
+
 
 
 
