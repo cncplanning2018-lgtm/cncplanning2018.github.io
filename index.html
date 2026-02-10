@@ -8,15 +8,15 @@
     <a-scene embedded arjs="debugUIEnabled: false;">
       
       <a-assets>
-        <a-asset-item id="sheep-model" src="giaffe.glb"></a-asset-item>
+        <a-asset-item id="sheep-model" src="dogg.glb"></a-asset-item>
       </a-assets>
 
-      <a-marker type="pattern" url="pattern-marker-dog.patt">
+      <a-marker type="pattern" url="pattern-marker01.patt">
         <a-entity 
           gltf-model="#sheep-model" 
-          scale="3.5 3.5 3.5" 
+          scale="1 1 1" 
           position="0 0 0"
-          rotation="0 0 0">
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
         </a-entity>
       </a-marker>
 
@@ -24,6 +24,7 @@
     </a-scene>
   </body>
 </html>
+
 
 
 
