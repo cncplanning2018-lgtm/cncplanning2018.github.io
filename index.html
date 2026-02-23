@@ -1,98 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-  
-  <style>
-    .shutter-button {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70px;
-      height: 70px;
-      background: white;
-      border: 5px solid #FFCC00;
-      border-radius: 50%;
-      z-index: 9999;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-    #flash {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: white;
-      z-index: 10000;
-      display: none;
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Kunika Safari - Gaole</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
+    <style>
+        /* ボタンのデザイン（ガオーレ専用：ゴールドグラデーション） */
+        .ar-launch-button {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            color: white;
+            border-radius: 50px;
+            display: none; /* マーカー検知まで非表示 */
+            z-index: 9999;
+            text-decoration: none;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+            border: 2px solid #fff;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #status-label {
+            position: fixed;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            z-index: 10000;
+            font-family: sans-serif;
+            text-shadow: 2px 2px 4px #000;
+            pointer-events: none;
+        }
+    </style>
 </head>
 
-<body style="margin: 0px; overflow: hidden;">
-  <div id="flash"></div>
-  <div id="btn-cap" class="shutter-button"></div>
+<body style="margin: 0; overflow: hidden;">
 
-  <a-scene 
-    embedded 
-    arjs="debugUIEnabled: false; sourceType: webcam;" 
-    screenshot
-    renderer="preserveDrawingBuffer: true; antialias: true; alpha: true;">
-    
-    <a-assets>
-      <a-asset-item id="sheep-model" src="dogg.glb"></a-asset-item>
-    </a-assets>
+    <div id="status-label">ガオーレのマーカーを映してください</div>
 
-    <a-marker type="pattern" url="pattern-marker01.patt">
-      <a-entity 
-        gltf-model="#sheep-model" 
-        scale="1 1 1" 
-        position="0 0 0"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
-      </a-entity>
-    </a-marker>
+    <a id="ar-link" rel="ar" href="gaole.usdz" class="ar-launch-button">
+        ガオーレを目の前に出す
+    </a>
 
-    <a-entity camera></a-entity>
-  </a-scene>
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+        
+        <a-marker id="gaole-marker" type="pattern" url="pattern-marker01.patt">
+            <a-entity
+                id="gaole-model"
+                gltf-model="url(gaole.glb)"
+                scale="0.5 0.5 0.5"
+                position="0 0 0"
+                rotation="0 0 0">
+            </a-entity>
+        </a-marker>
 
-  <script>
-    const btn = document.getElementById('btn-cap');
-    const sceneEl = document.querySelector('a-scene');
-    const flash = document.getElementById('flash');
+        <a-entity camera></a-entity>
+    </a-scene>
 
-    btn.addEventListener('click', () => {
-      // 1. フラッシュ演出
-      flash.style.display = 'block';
-      setTimeout(() => { flash.style.display = 'none'; }, 100);
+    <script>
+        const marker = document.querySelector('#gaole-marker');
+        const btn = document.querySelector('#ar-link');
+        const statusLabel = document.querySelector('#status-label');
 
-      // 2. 撮影処理
-      const video = document.querySelector('video');
-      const canvasAR = sceneEl.components.screenshot.getCanvas('perspective');
-      
-      // 合成用のキャンバスを作成（ビデオの実際の解像度に合わせる）
-      const combinedCanvas = document.createElement('canvas');
-      combinedCanvas.width =video.clientWidth;
-      combinedCanvas.height = video.clientHeight * 1.5;
-      const ctx = combinedCanvas.getContext('2d');
+        // マーカーを検知したとき
+        marker.addEventListener('markerFound', () => {
+            btn.style.display = 'block';
+            statusLabel.style.display = 'none'; // 検知したら上の文字を消す
+        });
 
-      // 背景（カメラ映像）をそのままの比率で描画
-      ctx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
-      
-      // ARモデルをビデオのサイズに合わせて重ねる
-      ctx.drawImage(canvasAR, 0, 0, combinedCanvas.width, combinedCanvas.height);
-
-      // 3. ダウンロード実行
-      const link = document.createElement('a');
-      link.download = 'kagami-en-photo.png';
-      link.href = combinedCanvas.toDataURL('image/png');
-      link.click();
-    });
-  </script>
+        // マーカーを見失ったとき
+        marker.addEventListener('markerLost', () => {
+            // 体験をスムーズにするため、一度出たボタンはあえて消さない設定もアリです。
+            // 厳密に制御したい場合は以下を有効にしてください。
+            // btn.style.display = 'none';
+            // statusLabel.style.display = 'block';
+        });
+    </script>
 </body>
 </html>
-
-
-
-
