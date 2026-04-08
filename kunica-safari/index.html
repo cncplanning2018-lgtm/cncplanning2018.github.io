@@ -1,1 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Kunika Safari - 7 Chars Hybrid</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        .ar-btn {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            padding: 20px 40px; color: white; border-radius: 50px;
+            display: none; z-index: 9999; text-decoration: none; font-weight: bold;
+            border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-family: sans-serif; font-size: 18px;
+        }
+    </style>
+</head>
+<body style="margin: 0; overflow: hidden;">
 
+    <a id="ar-link" class="ar-btn"></a>
+
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+        <a-marker type="pattern" url="pattern-marker01.patt" class="char-marker" data-id="gaore"></a-marker>
+        <a-marker type="pattern" url="pattern-marker02.patt" class="char-marker" data-id="kirino"></a-marker>
+        <a-marker type="pattern" url="pattern-marker03.patt" class="char-marker" data-id="penpen"></a-marker>
+        <a-marker type="pattern" url="pattern-marker04.patt" class="char-marker" data-id="eldo"></a-marker>
+        <a-marker type="pattern" url="pattern-marker05.patt" class="char-marker" data-id="char5"></a-marker>
+        <a-marker type="pattern" url="pattern-marker06.patt" class="char-marker" data-id="char6"></a-marker>
+        <a-marker type="pattern" url="pattern-marker07.patt" class="char-marker" data-id="char7"></a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const btn = document.querySelector('#ar-link');
+        const markers = document.querySelectorAll('.char-marker');
+
+        // キャラクター設定（名前と背景色）
+        const charInfo = {
+            gaore:  { name: "ガオーレ", color: "#b8860b" },
+            kirino: { name: "キリノ", color: "#ffa500" },
+            penpen: { name: "ぺんぺん", color: "#00bfff" },
+            eldo:   { name: "エルド", color: "#5f9ea0" },
+            char5:  { name: "新キャラ5", color: "#9370db" },
+            char6:  { name: "新キャラ6", color: "#3cb371" },
+            char7:  { name: "新キャラ7", color: "#ff69b4" }
+        };
+
+        markers.forEach(m => {
+            m.addEventListener('markerFound', () => {
+                const id = m.getAttribute('data-id');
+                const info = charInfo[id];
+                
+                if (isAndroid) {
+                    // Android (Scene Viewer) 向けのインテント発行
+                    btn.href = `intent://arvr.google.com/scene-viewer/1.0?file=${window.location.origin}/${id}.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                } else {
+                    // iPhone (AR Quick Look) 向け
+                    btn.href = `${id}.usdz`;
+                    btn.setAttribute('rel', 'ar');
+                }
+
+                btn.innerText = `${info.name}を現実に呼ぶ`;
+                btn.style.background = info.color;
+                btn.style.display = 'block';
+            });
+            m.addEventListener('markerLost', () => { btn.style.display = 'none'; });
+        });
+    </script>
+</body>
+</html>
