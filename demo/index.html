@@ -11,9 +11,10 @@
         <a-asset-item id="gaore-model" src="gaore.glb"></a-asset-item>
       </a-assets>
 
-      <a-marker preset="hiro">
+       <a-marker type="pattern" url="pattern-marker02.patt">
+
         <a-entity 
-          gltf-model="#sheep-model" 
+          gltf-model="#gaore-model" 
           scale="1.0 1.0 1.0" 
           position="0 0 0"
           animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
