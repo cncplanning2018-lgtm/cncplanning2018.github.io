@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kunika Safari - Single AR</title>
+    <title>Kunika Safari - Gaore AR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <style>
@@ -12,40 +12,39 @@
             padding: 20px 40px; color: white; border-radius: 50px;
             display: none; z-index: 9999; text-decoration: none; font-weight: bold;
             border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            font-family: sans-serif; font-size: 18px; background: #2196F3;
+            font-family: sans-serif; font-size: 18px; background: #b8860b; /* ガオーレの金色 */
         }
     </style>
 </head>
 <body style="margin: 0; overflow: hidden;">
 
-    <a id="ar-link" class="ar-btn">キャラクターを現実に呼ぶ</a>
+    <a id="ar-link" class="ar-btn">ガオーレを現実に呼ぶ</a>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <a-marker id="main-marker" type="pattern" url="pattern-marker.patt">
-            <a-entity gltf-model="url(char.glb)" scale="1.0 1.0 1.0"></a-entity>
+        <a-marker id="gaore-marker" type="pattern" url="pattern-add01.patt">
+            <a-entity gltf-model="url(gaoreu.glb)" scale="1.0 1.0 1.0"></a-entity>
         </a-marker>
         <a-entity camera></a-entity>
     </a-scene>
 
     <script>
         const btn = document.querySelector('#ar-link');
-        const marker = document.querySelector('#main-marker');
+        const marker = document.querySelector('#gaore-marker');
         
-        // デバイス判定
+        // Android判定
         const isAndroid = /Android/i.test(navigator.userAgent);
         
-        // ファイル設定（ここを適宜書き換えてください）
-        const fileName = "char"; 
+        // サーバー上の絶対パスを取得するための準備
         const currentUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "");
 
         marker.addEventListener('markerFound', () => {
             if (isAndroid) {
-                // Android (Scene Viewer) 向けの設定
-                const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/${fileName}.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                // Android (Pixel 5a) 用: gaoreu.glb を使用
+                const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/gaoreu.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
                 btn.href = intent;
             } else {
-                // iPhone (AR Quick Look) 向けの設定
-                btn.href = `${fileName}.usdz`;
+                // iPhone 用: gaore-add.usdz を使用
+                btn.href = `gaore-add.usdz`;
                 btn.setAttribute('rel', 'ar');
             }
             btn.style.display = 'block';
