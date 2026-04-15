@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Kunika Safari - Single AR</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        .ar-btn {
+            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+            padding: 20px 40px; color: white; border-radius: 50px;
+            display: none; z-index: 9999; text-decoration: none; font-weight: bold;
+            border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-family: sans-serif; font-size: 18px; background: #2196F3;
+        }
+    </style>
+</head>
+<body style="margin: 0; overflow: hidden;">
 
+    <a id="ar-link" class="ar-btn">キャラクターを現実に呼ぶ</a>
+
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+        <a-marker id="main-marker" type="pattern" url="pattern-marker.patt">
+            <a-entity gltf-model="url(char.glb)" scale="1.0 1.0 1.0"></a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        const btn = document.querySelector('#ar-link');
+        const marker = document.querySelector('#main-marker');
+        
+        // デバイス判定
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        
+        // ファイル設定（ここを適宜書き換えてください）
+        const fileName = "char"; 
+        const currentUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "");
+
+        marker.addEventListener('markerFound', () => {
+            if (isAndroid) {
+                // Android (Scene Viewer) 向けの設定
+                const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/${fileName}.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                btn.href = intent;
+            } else {
+                // iPhone (AR Quick Look) 向けの設定
+                btn.href = `${fileName}.usdz`;
+                btn.setAttribute('rel', 'ar');
+            }
+            btn.style.display = 'block';
+        });
+
+        marker.addEventListener('markerLost', () => {
+            btn.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
