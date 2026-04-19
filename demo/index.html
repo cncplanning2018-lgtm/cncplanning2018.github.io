@@ -40,7 +40,7 @@
         marker.addEventListener('markerFound', () => {
             if (isAndroid) {
                 // Android (Pixel 5a) 用: gaoreu.glb を使用
-                const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/gaoreu.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/penpen.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
                 btn.href = intent;
             } else {
                 // iPhone 用: penpen.usdz を使用
