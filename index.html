@@ -3,66 +3,67 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kunika Safari - 4 Chars AR</title>
+    <title>Kunika Safari - Experience Edition</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <style>
-        .ar-launch-button {
+        .ar-btn {
             position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
-            padding: 18px 32px; color: white; border-radius: 50px;
+            padding: 20px 40px; color: white; border-radius: 50px;
             display: none; z-index: 9999; text-decoration: none; font-weight: bold;
-            border: 2px solid #fff; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: all 0.3s; font-family: sans-serif;
+            border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-family: sans-serif; font-size: 18px; text-align: center;
         }
     </style>
 </head>
 <body style="margin: 0; overflow: hidden;">
 
-    <a id="ar-link" rel="ar" href="" class="ar-launch-button"></a>
+    <a id="ar-link" class="ar-btn"></a>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        
-        <a-marker id="marker-gaole" type="pattern" url="pattern-safari-gaore.patt" class="char-marker" data-id="gaole">
-            <a-entity gltf-model="url(gaore.glb)" scale="1.0 1.0 1.0" rotation="0 0 0"></a-entity>
-        </a-marker>
-
-        <a-marker id="marker-kirino" type="pattern" url="pattern-safari-kirino.patt" class="char-marker" data-id="kirino">
-            <a-entity gltf-model="url(kirino.glb)" scale="1.0 1.0 1.0" rotation="0 0 0"></a-entity>
-        </a-marker>
-
-        <a-marker id="marker-penpen" type="pattern" url="pattern-safari-penpen.patt" class="char-marker" data-id="penpen">
-            <a-entity gltf-model="url(penpen.glb)" scale="1.0 1.0 1.0" rotation="0 0 0"></a-entity>
-        </a-marker>
-
-        <a-marker id="marker-eldo" type="pattern" url="pattern-safari-eldo.patt" class="char-marker" data-id="eldo">
-            <a-entity gltf-model="url(eldo.glb)" scale="1.0 1.0 1.0" rotation="0 0 0"></a-entity>
-        </a-marker>
+        <!-- 9体のマーカー定義 -->
+        <a-marker type="pattern" url="pattern-safari-gaore.patt" class="char-marker" data-id="gaore" data-name="ガオーレ" data-color="#b8860b"></a-marker>
+        <a-marker type="pattern" url="pattern-safari-kirino.patt" class="char-marker" data-id="kirino" data-name="キリノ" data-color="#ffa500"></a-marker>
+        <a-marker type="pattern" url="pattern-safari-penpen.patt" class="char-marker" data-id="penpen" data-name="ぺんぺん" data-color="#00bfff"></a-marker>
+        <a-marker type="pattern" url="pattern-safari-eldo.patt" class="char-marker" data-id="eldo" data-name="エルド" data-color="#5f9ea0"></a-marker>
+        <a-marker type="pattern" url="pattern-safari-nukumal.patt" class="char-marker" data-id="nukumal" data-name="ヌクマル" data-color="#ffdead"></a-marker>
+        <a-marker type="pattern" url="pattern-safari-rirul.patt" class="char-marker" data-id="rirul" data-name="リルル" data-color="#dda0dd"></a-marker>
+        <a-marker type="pattern" url="pattern-safari-ronron.patt" class="char-marker" data-id="ronron" data-name="ロンロン" data-color="#f0e68c"></a-marker>
+        <a-marker type="pattern" url="pattern-safari-rouge.patt" class="char-marker" data-id="rouge" data-name="ルージュ" data-color="#ff4500"></a-marker>
+        <a-marker type="pattern" url="pattern-safari-stra.patt" class="char-marker" data-id="stra" data-name="ストラ" data-color="#4682b4"></a-marker>
 
         <a-entity camera></a-entity>
     </a-scene>
 
     <script>
-        const config = {
-            gaole: { name: "ガオーレを現実に呼ぶ", url: "gaore.usdz", bg: "#b8860b" },
-            kirino: { name: "キリノを現実に呼ぶ", url: "kirino.usdz", bg: "#ffa500" },
-            penpen: { name: "ぺんぺんを現実に呼ぶ", url: "penpen.usdz", bg: "#00bfff" },
-            eldo: { name: "エルドを現実に呼ぶ", url: "eldo.usdz", bg: "#5f9ea0" } // カデットブルー（象の体色に近い落ち着いた色）
-        };
-
+        const isAndroid = /Android/i.test(navigator.userAgent);
         const btn = document.querySelector('#ar-link');
         const markers = document.querySelectorAll('.char-marker');
+        const currentUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "");
 
         markers.forEach(m => {
             m.addEventListener('markerFound', () => {
-                const data = config[m.getAttribute('data-id')];
-                btn.href = data.url;
-                btn.innerText = data.name;
-                btn.style.background = data.bg;
+                const id = m.getAttribute('data-id');
+                const name = m.getAttribute('data-name');
+                const color = m.getAttribute('data-color');
+                
+                if (isAndroid) {
+                    // Android用: gaore.glb などを参照
+                    btn.href = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/${id}.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                } else {
+                    // iPhone用: gaore.usdz などを参照
+                    btn.href = `${id}.usdz`;
+                    btn.setAttribute('rel', 'ar');
+                }
+
+                btn.innerText = `${name}を現実に呼ぶ`;
+                btn.style.background = color;
                 btn.style.display = 'block';
             });
-            m.addEventListener('markerLost', () => { btn.style.display = 'none'; });
+            m.addEventListener('markerLost', () => {
+                btn.style.display = 'none';
+            });
         });
     </script>
 </body>
 </html>
-
