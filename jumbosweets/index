@@ -1,9 +1,95 @@
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5PL12EZBEH"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<!DOCTYPE html>
+<html>
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PL12EZBEH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-5PL12EZBEH');
+    </script>
 
-  gtag('config', 'G-5PL12EZBEH');
-</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>TEPPAN AR Sweets Photo Booth</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        /* フォトブース用にボタンを少し下部に下げ、丸みを持たせてスッキリさせています */
+        .ar-btn {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            padding: 18px 36px; color: white; border-radius: 50px;
+            display: none; z-index: 9999; text-decoration: none; font-weight: bold;
+            border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-family: sans-serif; font-size: 16px; text-align: center;
+        }
+    </style>
+</head>
+<body style="margin: 0; overflow: hidden;">
+
+    <a id="ar-link" class="ar-btn"></a>
+
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+        
+        <a-marker type="pattern" url="pattern-Dounuts.patt" class="char-marker" data-id="Dounuts" data-name="ジャンボドーナツ" data-color="#ff69b4">
+            <a-entity gltf-model="Dounuts.glb" scale="1 1 1" position="0 0 0"></a-entity>
+        </a-marker>
+
+        <a-marker type="pattern" url="pattern-bread.patt" class="char-marker" data-id="bread" data-name="ジャンボ食パン" data-color="#f4a460">
+            <a-entity gltf-model="bread.glb" scale="1 1 1" position="0 0 0"></a-entity>
+        </a-marker>
+
+        <a-marker type="pattern" url="pattern-choco.patt" class="char-marker" data-id="choco" data-name="ジャンボ板チョコ" data-color="#8b4513">
+            <a-entity gltf-model="choco.glb" scale="1 1 1" position="0 0 0"></a-entity>
+        </a-marker>
+
+        <a-marker type="pattern" url="pattern-oreo.patt" class="char-marker" data-id="oreo" data-name="ジャンボオレオ" data-color="#333333">
+            <a-entity gltf-model="oreo.glb" scale="1 1 1" position="0 0 0"></a-entity>
+        </a-marker>
+
+        <a-marker type="pattern" url="pattern-pudding.patt" class="char-marker" data-id="pudding" data-name="ジャンボプリン" data-color="#ffae00">
+            <a-entity gltf-model="pudding.glb" scale="1 1 1" position="0 0 0"></a-entity>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const btn = document.querySelector('#ar-link');
+        const markers = document.querySelectorAll('.char-marker');
+        const currentUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "");
+
+        markers.forEach(m => {
+            m.addEventListener('markerFound', () => {
+                const id = m.getAttribute('data-id');
+                const name = m.getAttribute('data-name');
+                const color = m.getAttribute('data-color');
+                
+                // TEPPAN用のGA4イベントを送信（どのスイーツが人気か計測）
+                btn.onclick = () => {
+                    gtag('event', 'teppan_ar_activation', {
+                        'sweet_id': id,
+                        'sweet_name': name,
+                        'device_type': isAndroid ? 'Android' : 'iOS'
+                    });
+                };
+
+                if (isAndroid) {
+                    btn.href = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/${id}.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                } else {
+                    btn.href = `${id}.usdz`;
+                    btn.setAttribute('rel', 'ar');
+                }
+
+                btn.innerText = `📸 ${name}と写真を撮る`;
+                btn.style.background = color;
+                btn.style.display = 'block';
+            });
+            m.addEventListener('markerLost', () => {
+                btn.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
