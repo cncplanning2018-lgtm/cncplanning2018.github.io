@@ -6,7 +6,9 @@
     <title>Kunika Safari - Pyramid AR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
     <style>
+        /* 現実に出すボタンのスタイリング */
         .ar-btn {
             position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
             padding: 20px 40px; color: white; border-radius: 50px;
@@ -21,39 +23,50 @@
     <a id="ar-link" class="ar-btn">ピラミッドを現実に出す</a>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_matrix; matrixCodeType: 3x3;">
-        <a-marker id="penpen-marker" type="pattern" url="./pattern-marker02.patt">
-            <a-entity gltf-model="pyramid.glb" scale="0.005 0.005 0.005" position="0 0 0"></a-entity>
+        
+        <a-marker id="pyramid-marker" type="pattern" url="./pattern-marker02.patt">
+            
+            <a-entity 
+                gltf-model="pyramid.glb" 
+                scale="0.002 0.002 0.002" 
+                position="0 0 0"
+                rotation="0 0 0">
+            </a-entity>
+            
         </a-marker>
+        
         <a-entity camera></a-entity>
+        
     </a-scene>
 
     <script>
         const btn = document.querySelector('#ar-link');
-        const marker = document.querySelector('#penpen-marker');
+        const marker = document.querySelector('#pyramid-marker');
         
+        // Android判定
         const isAndroid = /Android/i.test(navigator.userAgent);
+        
+        // 現在のフォルダの絶対パスを自動取得 (Scene Viewer用)
         const currentUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "");
 
-        // 【デバッグ用】マーカー認識を確実にチェックするためのログ
+        // マーカーを認識したときの処理
         marker.addEventListener('markerFound', () => {
-            console.log("マーカーを認識しました！");
             if (isAndroid) {
+                // Android用 (Scene Viewer) ➔ pyramid.glb を呼び出し
                 const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/pyramid.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
                 btn.href = intent;
             } else {
+                // iPhone用 (Quick Look) ➔ pyramid.usdz を呼び出し
                 btn.href = `pyramid.usdz`;
                 btn.setAttribute('rel', 'ar');
             }
+            
+            // ボタンを表示
             btn.style.display = 'block';
         });
 
-        marker.addEventListener('markerFound', () => {
-             // iOS Safariで稀にボタン表示が遅れる対策
-             setTimeout(() => { btn.style.display = 'block'; }, 100);
-        });
-
+        // マーカーを見失ったときの処理
         marker.addEventListener('markerLost', () => {
-            console.log("マーカーを見失いました");
             btn.style.display = 'none';
         });
     </script>
