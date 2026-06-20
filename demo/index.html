@@ -18,11 +18,11 @@
 </head>
 <body style="margin: 0; overflow: hidden;">
 
-    <a id="ar-link" class="ar-btn">ぺんぺんを現実に呼ぶ</a>
+    <a id="ar-link" class="ar-btn">ピラミッドを現実に出す</a>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <a-marker id="penpen-marker" type="pattern" url="pattern-safari-penpen.patt">
-            <a-entity gltf-model="url(penpen.glb)" scale="1.5 1.5 1.5"></a-entity>
+        <a-marker id="penpen-marker" type="pattern" url="pattern-maker02.patt">
+            <a-entity gltf-model="url(pyramid.glb)" scale="0.5 0.5 0.5"></a-entity>
         </a-marker>
         <a-entity camera></a-entity>
     </a-scene>
@@ -39,12 +39,12 @@
 
         marker.addEventListener('markerFound', () => {
             if (isAndroid) {
-                // Android (Pixel 5a) 用: gaoreu.glb を使用
-                const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/penpen.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                // Android (Pixel 5a) 用: pyramid.glb を使用
+                const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/pyramid.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
                 btn.href = intent;
             } else {
-                // iPhone 用: penpen.usdz を使用
-                btn.href = `penpen.usdz`;
+                // iPhone 用: pyramid.usdz を使用
+                btn.href = `pyramid.usdz`;
                 btn.setAttribute('rel', 'ar');
             }
             btn.style.display = 'block';
