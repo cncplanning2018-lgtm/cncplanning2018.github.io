@@ -6,9 +6,7 @@
     <title>Kunika Safari - Pyramid AR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    
     <style>
-        /* 現実に出すボタンのスタイリング */
         .ar-btn {
             position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
             padding: 20px 40px; color: white; border-radius: 50px;
@@ -23,49 +21,34 @@
     <a id="ar-link" class="ar-btn">ピラミッドを現実に出す</a>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_matrix; matrixCodeType: 3x3;">
-        
         <a-marker id="pyramid-marker" type="pattern" url="./pattern-marker02.patt">
-            
-            <a-entity 
-                gltf-model="pyramid.glb" 
-                scale="0.1 0.1 0.1" 
-                position="0 0 0"
-                rotation="0 0 0">
-            </a-entity>
-            
+            <a-entity gltf-model="pyramid.glb" scale="0.1 0.1 0.1" position="0 0 0"></a-entity>
         </a-marker>
-        
         <a-entity camera></a-entity>
-        
     </a-scene>
 
     <script>
         const btn = document.querySelector('#ar-link');
         const marker = document.querySelector('#pyramid-marker');
         
-        // Android判定
         const isAndroid = /Android/i.test(navigator.userAgent);
         
-        // 現在のフォルダの絶対パスを自動取得 (Scene Viewer用)
+        // 現在のフォルダの絶対パス（ベースURL）を正しく取得
         const currentUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "");
 
-        // マーカーを認識したときの処理
         marker.addEventListener('markerFound', () => {
             if (isAndroid) {
-                // Android用 (Scene Viewer) ➔ pyramid.glb を呼び出し
+                // Android用 (絶対パスを使用)
                 const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/pyramid.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
                 btn.href = intent;
             } else {
-                // iPhone用 (Quick Look) ➔ pyramid.usdz を呼び出し
-                btn.href = `pyramid.usdz`;
+                // 【★ここを修正】iPhone用にも絶対パス（https://.../pyramid.usdz）をしっかりと作って指定する
+                btn.href = `${currentUrl}/pyramid.usdz`;
                 btn.setAttribute('rel', 'ar');
             }
-            
-            // ボタンを表示
             btn.style.display = 'block';
         });
 
-        // マーカーを見失ったときの処理
         marker.addEventListener('markerLost', () => {
             btn.style.display = 'none';
         });
