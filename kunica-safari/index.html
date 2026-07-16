@@ -1,80 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XBCWKWTRL0"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-XBCWKWTRL0');
-    </script>
-
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kunika Safari - Analytics Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Kunika Safari - Pyramid AR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <style>
         .ar-btn {
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
             padding: 20px 40px; color: white; border-radius: 50px;
             display: none; z-index: 9999; text-decoration: none; font-weight: bold;
             border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            font-family: sans-serif; font-size: 18px; text-align: center;
+            font-family: sans-serif; font-size: 18px; background: #b8860b; /* 金色 */
         }
     </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
+<body style="margin: 0; overflow: hidden; -webkit-overflow-scrolling: touch;">
 
-    <a id="ar-link" class="ar-btn"></a>
+    <a id="ar-link" class="ar-btn">ピラミッドを現実に出す</a>
 
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
-        <a-marker type="pattern" url="pattern-safari-gaore.patt" class="char-marker" data-id="gaore" data-name="ガオーレ" data-color="#b8860b"><a-entity gltf-model="gaore.glb" scale="1.5 1.5 1.5"></a-entity></a-marker>
-        <a-marker type="pattern" url="pattern-safari-kirino.patt" class="char-marker" data-id="kirino" data-name="キリノ" data-color="#ffa500"><a-entity gltf-model="kirino.glb" scale="1.5 1.5 1.5"></a-entity></a-marker>
-        <a-marker type="pattern" url="pattern-safari-penpen.patt" class="char-marker" data-id="penpen" data-name="ぺんぺん" data-color="#00bfff"><a-entity gltf-model="penpen.glb" scale="1.5 1.5 1.5"></a-entity></a-marker>
-        <a-marker type="pattern" url="pattern-safari-eldo.patt" class="char-marker" data-id="eldo" data-name="エルド" data-color="#5f9ea0"><a-entity gltf-model="eldo.glb" scale="1.5 1.5 1.5"></a-entity></a-marker>
-        <a-marker type="pattern" url="pattern-safari-nukumal.patt" class="char-marker" data-id="nukumal" data-name="ヌクマル" data-color="#ffdead"><a-entity gltf-model="nukumal.glb" scale="1.5 1.5 1.5"></a-entity></a-marker>
-        <a-marker type="pattern" url="pattern-safari-rirul.patt" class="char-marker" data-id="rirul" data-name="リルル" data-color="#dda0dd"><a-entity gltf-model="rirul.glb" scale="1.5 1.5 1.5"></a-entity></a-marker>
-        <a-marker type="pattern" url="pattern-safari-ronron.patt" class="char-marker" data-id="ronron" data-name="ロンロン" data-color="#f0e68c"><a-entity gltf-model="ronron.glb" scale="1.5 1.5 1.5"></a-entity></a-marker>
-        <a-marker type="pattern" url="pattern-safari-rouge.patt" class="char-marker" data-id="rouge" data-name="ルージュ" data-color="#ff4500"><a-entity gltf-model="rouge.glb" scale="1.5 1.5 1.5"></a-entity></a-marker>
-        <a-marker type="pattern" url="pattern-safari-stra.patt" class="char-marker" data-id="stra" data-name="ストラ" data-color="#4682b4"><a-entity gltf-model="stra.glb" scale="1.5 1.5 1.5"></a-entity></a-marker>
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_matrix; matrixCodeType: 3x3;">
+        <a-marker id="pyramid-marker" type="pattern" url="./pattern-pyramid.patt">
+            <a-entity gltf-model="pyramid.glb" scale="0.1 0.1 0.1" position="0 0 0"></a-entity>
+        </a-marker>
         <a-entity camera></a-entity>
     </a-scene>
 
     <script>
-        const isAndroid = /Android/i.test(navigator.userAgent);
         const btn = document.querySelector('#ar-link');
-        const markers = document.querySelectorAll('.char-marker');
+        const marker = document.querySelector('#pyramid-marker');
+        
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        
+        // 現在のフォルダの絶対パス（ベースURL）を正しく取得
         const currentUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "");
 
-        markers.forEach(m => {
-            m.addEventListener('markerFound', () => {
-                const id = m.getAttribute('data-id');
-                const name = m.getAttribute('data-name');
-                const color = m.getAttribute('data-color');
-                
-                // ボタンが押された時にGA4にデータを送るための設定
-                btn.onclick = () => {
-                    gtag('event', 'ar_activation', {
-                        'character_id': id,
-                        'character_name': name,
-                        'device_type': isAndroid ? 'Android' : 'iOS'
-                    });
-                };
+        marker.addEventListener('markerFound', () => {
+            if (isAndroid) {
+                // 【Android用】 &resizable=false を追加して実寸大に固定
+                const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/pyramid.glb&mode=ar_only&resizable=false#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                btn.href = intent;
+            } else {
+                // 【iPhone用】 #allowsContentScaling=0 を追加して実寸大に固定
+                btn.href = `${currentUrl}/pyramid.usdz#allowsContentScaling=0`;
+                btn.setAttribute('rel', 'ar');
+            }
+            btn.style.display = 'block';
+        });
 
-                if (isAndroid) {
-                    btn.href = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/${id}.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
-                } else {
-                    btn.href = `${id}.usdz`;
-                    btn.setAttribute('rel', 'ar');
-                }
-
-                btn.innerText = `${name}を現実に呼ぶ`;
-                btn.style.background = color;
-                btn.style.display = 'block';
-            });
-            m.addEventListener('markerLost', () => { btn.style.display = 'none'; });
+        marker.addEventListener('markerLost', () => {
+            btn.style.display = 'none';
         });
     </script>
 </body>
