@@ -78,9 +78,9 @@
         // --------------------------------------------------
         moaiMarker.addEventListener('markerFound', () => {
             if (!isMoaiCleared) {
-                const answer = prompt("【黄金モアイの試練】\n暗号を入力せよ！");
+                const answer = prompt("【モアイの隠し財宝の試練】\n暗号を入力せよ！");
                 if (answer === MOAI_PASSWORD) {
-                    alert("暗号解除！黄金モアイの召喚が可能になった！");
+                    alert("暗号解除！財宝への道の召喚が可能になった！");
                     isMoaiCleared = true;
                 } else if (answer === null) {
                     return; // キャンセル時
@@ -92,7 +92,7 @@
 
             // 暗号をクリアしていればボタン表示
             if (isMoaiCleared) {
-                setArButton('moai-gold', '黄金モアイを現実に出す');
+                setArButton('moai-gold', '財宝への道を現実に出す');
             }
         });
 
@@ -104,7 +104,7 @@
         // ② 神社マーカー処理（パスワードなし）
         // --------------------------------------------------
         shrineMarker.addEventListener('markerFound', () => {
-            setArButton('shrineーｍ', '神社を現実に出す');
+            setArButton('shrineーｍ', '神殿を現実に出す');
         });
 
         shrineMarker.addEventListener('markerLost', () => {
