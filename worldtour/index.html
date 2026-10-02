@@ -1,50 +1,156 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>AR World Tour</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>AR World Tour</title>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XBCWKWTRL0"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
 
-      gtag('config', 'G-XBCWKWTRL0');
-    </script>
+  <!-- A-Frame & AR.js -->
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <style>
-        .ar-btn {
-            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-            padding: 20px 40px; color: white; border-radius: 50px;
-            display: none; z-index: 99ARワールドツアー用の4拠点対応コードです。すべてパスワードなしで起動し、実寸大固定パラメータとプレビュー用スケール（0.5）を設定しています。
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+    #ar-ui {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: none;
+    }
+    .ar-button {
+      background-color: #ff9800;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .ar-button:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
 
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>AR World Tour</title>
+  <div id="ar-ui">
+    <a id="ar-link" class="ar-button" href="#" target="_blank">ARを現実に出す</a>
+  </div>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="[https://www.googletagmanager.com/gtag/js?id=G-XBCWKWTRL0](https://www.googletagmanager.com/gtag/js?id=G-XBCWKWTRL0)"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
+    <a-assets>
+      <a-asset-item id="eiffel-glb" src="EiffelTower-w.glb"></a-asset-item>
+      <a-asset-item id="moai-glb" src="moai-w.glb"></a-asset-item>
+      <a-asset-item id="pyramid-glb" src="pyramid-w.glb"></a-asset-item>
+      <a-asset-item id="shrine-glb" src="shrine-w.glb"></a-asset-item>
+    </a-assets>
 
-      gtag('config', 'G-XBCWKWTRL0');
-    </script>
+    <!-- エッフェル塔 -->
+    <a-marker type="pattern" url="pattern-eiffel.patt" id="marker-eiffel">
+      <a-entity gltf-model="#eiffel-glb" scale="0.1 0.1 0.1" position="0 0 0"></a-entity>
+    </a-marker>
 
-    <script src="[https://aframe.io/releases/1.4.0/aframe.min.js](https://aframe.io/releases/1.4.0/aframe.min.js)"></script>
-    <script src="[https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js](https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js)"></script>
-    <style>
-        .ar-btn {
-            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-            padding: 20px 40px; color: white; border-radius: 50px;
-            display: none; z-index: 9999; text-decoration: none
+    <!-- モアイ -->
+    <a-marker type="pattern" url="pattern-moai.patt" id="marker-moai">
+      <a-entity gltf-model="#moai-glb" scale="0.1 0.1 0.1" position="0 0 0"></a-entity>
+    </a-marker>
+
+    <!-- ピラミッド -->
+    <a-marker type="pattern" url="pattern-pyramid.patt" id="marker-pyramid">
+      <a-entity gltf-model="#pyramid-glb" scale="0.1 0.1 0.1" position="0 0 0"></a-entity>
+    </a-marker>
+
+    <!-- 神殿 -->
+    <a-marker type="pattern" url="pattern-shri.patt" id="marker-shrine">
+      <a-entity gltf-model="#shrine-glb" scale="0.1 0.1 0.1" position="0 0 0"></a-entity>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const ui = document.getElementById('ar-ui');
+    const arLink = document.getElementById('ar-link');
+
+    const worldTourData = {
+      'marker-eiffel': {
+        name: 'エッフェル塔',
+        glb: 'EiffelTower-w.glb',
+        usdz: 'EiffelTower-w.usdz'
+      },
+      'marker-moai': {
+        name: 'モアイ',
+        glb: 'moai-w.glb',
+        usdz: 'moai-w.usdz'
+      },
+      'marker-pyramid': {
+        name: 'ピラミッド',
+        glb: 'pyramid-w.glb',
+        usdz: 'pyramid-w.usdz'
+      },
+      'marker-shrine': {
+        name: '神殿',
+        glb: 'shrine-w.glb',
+        usdz: 'shrine-w.usdz'
+      }
+    };
+
+    function setArButton(data) {
+      const currentUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+      
+      if (isiOS) {
+        arLink.setAttribute('rel', 'ar');
+        arLink.setAttribute('href', `${currentUrl}/${data.usdz}`);
+        const img = document.createElement('img');
+        arLink.appendChild(img);
+      } else {
+        const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(currentUrl + '/' + data.glb)}&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;end;`;
+        arLink.setAttribute('href', intentUrl);
+      }
+
+      arLink.textContent = `${data.name}を現実に出す`;
+      ui.style.display = 'block';
+
+      // GTAG イベント送信
+      if (typeof gtag === 'function') {
+        gtag('event', 'marker_detected', {
+          'event_category': 'AR_World_Tour',
+          'event_label': data.name
+        });
+      }
+    }
+
+    Object.keys(worldTourData).forEach(markerId => {
+      const marker = document.getElementById(markerId);
+      
+      marker.addEventListener('markerFound', () => {
+        setArButton(worldTourData[markerId]);
+      });
+
+      marker.addEventListener('markerLost', () => {
+        ui.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
