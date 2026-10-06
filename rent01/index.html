@@ -1,1 +1,116 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Kunika Safari - Quest AR</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XBCWKWTRL0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XBCWKWTRL0');
+    </script>
+
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        .ar-btn {
+            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+            padding: 20px 40px; color: white; border-radius: 50px;
+            display: none; z-index: 9999; text-decoration: none; font-weight: bold;
+            border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-family: sans-serif; font-size: 18px; background: #b8860b; /* 金色 */
+        }
+    </style>
+</head>
+<body style="margin: 0; overflow: hidden; -webkit-overflow-scrolling: touch;">
+
+    <!-- AR起動用ボタン -->
+    <a id="ar-link" class="ar-btn">ARを現実に出す</a>
+
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_matrix; matrixCodeType: 3x3;">
+        
+        <!-- ① モアイ（黄金）マーカー：要パスワード -->
+        <a-marker id="moai-marker" type="pattern" url="./pattern-moai.patt">
+            <a-entity gltf-model="moai-gold.glb" scale="0.5 0.5 0.5" position="0 0 0"></a-entity>
+        </a-marker>
+
+        <!-- ② 神社マーカー：パスワードなし -->
+        <a-marker id="shrine-marker" type="pattern" url="./pattern-shri.patt">
+            <a-entity gltf-model="shrineーｍ.glb" scale="0.5 0.5 0.5" position="0 0 0"></a-entity>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        const btn = document.querySelector('#ar-link');
+        const moaiMarker = document.querySelector('#moai-marker');
+        const shrineMarker = document.querySelector('#shrine-marker');
+        
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const currentUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "");
+
+        // モアイ解除用パスワード
+        const MOAI_PASSWORD = "とりみ";
+        let isMoaiCleared = false; // クリア状態フラグ
+
+        // ARボタン生成関数（実寸大固定パラメータ付き）
+        function setArButton(fileName, btnText) {
+            btn.innerText = btnText;
+            if (isAndroid) {
+                // Android（Scene Viewer）実寸大固定: &resizable=false
+                btn.href = `intent://arvr.google.com/scene-viewer/1.0?file=${currentUrl}/${fileName}.glb&mode=ar_only&resizable=false#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+            } else {
+                // iPhone（Quick Look）実寸大固定: #allowsContentScaling=0
+                btn.href = `${currentUrl}/${fileName}.usdz#allowsContentScaling=0`;
+                btn.setAttribute('rel', 'ar');
+            }
+            btn.style.display = 'block';
+        }
+
+        // --------------------------------------------------
+        // ① モアイマーカー処理（要パスワード「とりみ」）
+        // --------------------------------------------------
+        moaiMarker.addEventListener('markerFound', () => {
+            if (!isMoaiCleared) {
+                const answer = prompt("【モアイの隠し財宝の試練】\n暗号を入力せよ！");
+                if (answer === MOAI_PASSWORD) {
+                    alert("暗号解除！財宝への道の召喚が可能になった！");
+                    isMoaiCleared = true;
+                } else if (answer === null) {
+                    return; // キャンセル時
+                } else {
+                    alert("暗号が違うようだ…（もう一度マーカーをかざしてね）");
+                    return;
+                }
+            }
+
+            // 暗号をクリアしていればボタン表示
+            if (isMoaiCleared) {
+                setArButton('moai-gold', '財宝への道を現実に出す');
+            }
+        });
+
+        moaiMarker.addEventListener('markerLost', () => {
+            btn.style.display = 'none';
+        });
+
+        // --------------------------------------------------
+        // ② 神社マーカー処理（パスワードなし）
+        // --------------------------------------------------
+        shrineMarker.addEventListener('markerFound', () => {
+            setArButton('shrineーｍ', '神殿を現実に出す');
+        });
+
+        shrineMarker.addEventListener('markerLost', () => {
+            btn.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
